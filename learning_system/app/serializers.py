@@ -2,9 +2,17 @@ from rest_framework import serializers
 from .models import Product, Group, Lesson, ProductAccess
 
 class ProductSerializer(serializers.ModelSerializer):
+    students_count = serializers.IntegerField(read_only=True)
+    average_group_filling = serializers.FloatField(read_only=True)
+    purchase_percent = serializers.SerializerMethodField()
+    
+
     class Meta:
         model = Product
-        fields = ['id', 'creator', 'name', 'start_date', 'price']
+        fields = '__all__'
+
+    def get_purchase_percent(self, obj):
+        return obj.get_purchase_percent()
 
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,4 +27,4 @@ class LessonSerializer(serializers.ModelSerializer):
 class ProductAccessSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductAccess
-        fields = ['id', 'user', 'product']
+        fields = ('id', 'user', 'product', 'group')
